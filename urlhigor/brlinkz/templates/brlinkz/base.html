@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BrLin.kz</title>
+  {% load staticfiles %}
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'brlinkz/css/custom.css' %}" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<script type="text/javascript">
+
+ $(function() {
+   $('#submitButton').click(function() {
+     $.ajax({
+       type: "POST",
+       url: "/makeshort/",
+       data: {
+         'url' : $('#url').val(),
+         'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val()
+       },
+       success: returnSuccess,
+       dataType: 'json'
+     });
+   });
+ });
+
+function returnSuccess(data, textStatus) {
+ if(data.url) {
+   $('#url-result').text(data.url);
+   $('#url').val("");
+ } else {
+ $('#url-result').text("Do not submit blank.");
+ }
+
+}
+</script>
+  <body>
+  <div id="wrap">
+   <header>
+    <center>
+     <h1><a href="{% url 'brlinkz:home' %}">BrLin.kz</a><br><h4>Shorten you URL!</h4></h1>
+    </center>
+   </header>
+
+   <div id="content">
+    {% block content %}
+
+    {% endblock %}
+   </div>
+   <div id="userlogin">
+    <small><center>
+     {% if request.user.is_authenticated %}
+        <p class="">Hey, {{ request.user.username }}, thanks for logging in!</p>
+        <a href="{% url 'brlinkz:logout' %}">Logout</a>
+     {% else %}
+      <a href="{% url 'brlinkz:register' %}">Sign Up</a> / <a href="{% url 'brlinkz:login' %}">Login</a>
+     {% endif %}
+    </center></small>
+
+   </div>
+  </div>
+
+  </body>
+</html>
